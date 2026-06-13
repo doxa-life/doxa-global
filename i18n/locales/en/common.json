@@ -1,0 +1,39 @@
+{
+  "app": {
+    "name": "Doxa Global"
+  },
+  "landing": {
+    "tagline": "Pray for the unreached, one people group at a time",
+    "intro": "Each time you pray, you'll be given a different unreached people group — those least covered in prayer come first. Join believers worldwide carrying these peoples to God.",
+    "start": "Start praying",
+    "how_title": "How it works",
+    "how_1": "You're handed a people group that needs prayer.",
+    "how_2": "Move through a short, guided prayer stack.",
+    "how_3": "When you're done, pray for another."
+  },
+  "pray": {
+    "begin": "Begin",
+    "next": "Next",
+    "pray_another": "Pray for another group",
+    "loading": "Finding a people group…",
+    "error": "Something went wrong. Please try again.",
+    "retry": "Try again",
+    "pray_for": "Pray for the",
+    "overview": "Overview",
+    "country": "Country",
+    "population": "Population",
+    "language": "Language",
+    "religion": "Religion",
+    "status": "Status",
+    "churches": "Churches",
+    "far_from_jesus": "far from Jesus",
+    "follow_jesus": "follow Jesus",
+    "find_out_more": "Find out more",
+    "photo_credit": "Photo credit",
+    "day_in_life_title": "A day in the life",
+    "scripture_title": "Pray more",
+    "done_title": "Amen",
+    "done_body": "You prayed for the {name}.",
+    "groups_today": "{count} groups prayed for today"
+  }
+}
