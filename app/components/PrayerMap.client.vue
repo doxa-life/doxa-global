@@ -3,7 +3,13 @@ import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
 interface TodayPoint { people_group_id: number, count: number }
-interface TodayData { points: TodayPoint[], group_count: number, prayer_count: number }
+interface TodayData {
+  points: TodayPoint[]
+  group_count: number
+  prayer_count: number
+  total_groups: number
+  prayed_total: number
+}
 
 const { t } = useI18n()
 const config = useRuntimeConfig()
@@ -35,14 +41,26 @@ const PRAYED: mapboxgl.ExpressionSpecification = [
 ]
 
 const mapEl = ref<HTMLElement | null>(null)
-const summary = ref({ group_count: 0, prayer_count: 0 })
+const summary = ref({ group_count: 0, prayer_count: 0, total_groups: 0, prayed_total: 0 })
 const loaded = ref(false)
+
+const progressPct = computed(() =>
+  summary.value.total_groups > 0
+    ? Math.round((summary.value.prayed_total / summary.value.total_groups) * 100)
+    : 0
+)
+const numberFmt = new Intl.NumberFormat('en-US')
 let map: mapboxgl.Map | null = null
 let raf = 0
 let pollTimer: ReturnType<typeof setInterval> | null = null
 
 function applyToday(data: TodayData) {
-  summary.value = { group_count: data.group_count, prayer_count: data.prayer_count }
+  summary.value = {
+    group_count: data.group_count,
+    prayer_count: data.prayer_count,
+    total_groups: data.total_groups,
+    prayed_total: data.prayed_total
+  }
   if (!map) return
   for (const p of data.points) {
     map.setFeatureState({ source: 'groups', id: p.people_group_id }, { prayed: p.count })
@@ -178,6 +196,28 @@ onUnmounted(() => {
 
 <template>
   <div class="w-full">
+    <!-- Overall progress across all people groups -->
+    <div
+      v-if="loaded"
+      class="mb-4"
+    >
+      <div class="flex items-baseline justify-between mb-1.5">
+        <p class="text-sm text-default">
+          <span class="font-semibold text-highlighted">{{ numberFmt.format(summary.prayed_total) }}</span>
+          {{ t('landing.map.progress', { total: numberFmt.format(summary.total_groups) }) }}
+        </p>
+        <p class="text-sm font-semibold text-primary">
+          {{ progressPct }}%
+        </p>
+      </div>
+      <div class="h-2 rounded-full bg-elevated overflow-hidden">
+        <div
+          class="h-full bg-primary rounded-full transition-all duration-500"
+          :style="{ width: `${progressPct}%` }"
+        />
+      </div>
+    </div>
+
     <div class="flex items-baseline justify-between mb-3">
       <h2 class="text-sm uppercase tracking-widest text-muted">
         {{ t('landing.map.title') }}

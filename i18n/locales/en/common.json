@@ -16,6 +16,7 @@
     "map": {
       "title": "Prayed for today",
       "summary": "{groups} groups · {prayers} prayers",
+      "progress": "of {total} people groups prayed for",
       "times": "prayed for once | prayed for {count} times",
       "empty": "No prayers yet today — be the first."
     }
