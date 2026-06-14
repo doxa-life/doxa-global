@@ -22,14 +22,6 @@ export async function prayFetch<T>(path: string, opts: { method?: 'GET' | 'POST'
   }) as T
 }
 
-export interface GlobalGroup {
-  id: number
-  slug: string
-  name: string
-  latitude: number | null
-  longitude: number | null
-}
-
 export interface ValueLabel {
   value: string
   label: string

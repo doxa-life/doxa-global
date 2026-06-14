@@ -14,16 +14,8 @@ function onSelect(slug: string) {
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col items-center justify-center px-6 py-16 text-center">
+  <div class="flex flex-col items-center justify-center px-6 py-16 text-center">
     <div class="max-w-xl flex flex-col items-center gap-8">
-      <div class="flex items-center gap-2 text-primary">
-        <UIcon
-          name="i-lucide-globe"
-          class="text-3xl"
-        />
-        <span class="text-xl font-semibold tracking-tight">{{ t('app.name') }}</span>
-      </div>
-
       <h1 class="text-4xl sm:text-5xl font-bold text-highlighted leading-tight">
         {{ t('landing.tagline') }}
       </h1>

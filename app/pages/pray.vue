@@ -14,7 +14,7 @@ const stackKey = ref(0)
 let trackingId = ''
 const startedAt = ref(0)
 
-const header = ref<{ name: string, imageUrl: string | null }>({ name: '', imageUrl: null })
+const header = ref<{ name: string, imageUrl: string | null, slug: string }>({ name: '', imageUrl: null, slug: '' })
 
 function buildCards(bundle: SessionBundle): StackCard[] {
   const demo = bundle.demographics
@@ -50,7 +50,11 @@ async function loadGroup(slug?: string) {
       peopleGroupId: bundle.demographics.id,
       sessionId: newSessionId()
     }
-    header.value = { name: bundle.demographics.name, imageUrl: bundle.demographics.image_url }
+    header.value = {
+      name: bundle.demographics.name,
+      imageUrl: bundle.demographics.image_url,
+      slug: bundle.demographics.slug
+    }
     startedAt.value = Date.now()
     cards.value = buildCards(bundle)
     stackKey.value++
@@ -92,7 +96,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col items-center justify-center px-4 py-12">
+  <div class="min-h-[calc(100vh-3.5rem)] flex flex-col items-center justify-center px-4 py-12">
     <!-- Loading -->
     <div
       v-if="status === 'loading'"

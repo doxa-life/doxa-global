@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
   const locale = (getQuery(event).locale as string) || 'en'
 
   const bundle = await prayFetch<GroupContentBundle>(
-    `/api/global/groups/${encodeURIComponent(slug)}/content`,
+    `/api/people-groups/${encodeURIComponent(slug)}/global-content`,
     { query: { locale } }
   )
 

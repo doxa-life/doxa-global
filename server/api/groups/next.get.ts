@@ -5,11 +5,21 @@
 // prayer count, so coverage stays even (a shuffled sweep) with no lap state.
 //
 // The selection pool (the people-group catalog) is owned by campaigns-sever;
-// we mirror just id/slug/name into group_prayer_counts on first use so the
-// weighting query can run locally against our counts.
+// we mirror just id/slug/name/coordinates into group_prayer_counts on first use
+// so the weighting query can run locally against our counts. We read the
+// existing public list endpoint with a minimal field set — its values come back
+// as strings, so we coerce them here.
 import { sql } from 'kysely'
 import { db } from '../../utils/database'
-import { prayFetch, type GlobalGroup } from '../../utils/pray'
+import { prayFetch } from '../../utils/pray'
+
+interface ListPost {
+  id: string | number
+  slug: string | null
+  name: string
+  latitude: string | number | null
+  longitude: string | number | null
+}
 
 async function ensurePoolSeeded(): Promise<void> {
   // Seed when empty, and backfill coordinates when any rows still lack them
@@ -27,19 +37,25 @@ async function ensurePoolSeeded(): Promise<void> {
   const withCoords = Number(stats?.with_coords ?? 0)
   if (total > 0 && withCoords === total) return
 
-  const { groups } = await prayFetch<{ groups: GlobalGroup[] }>('/api/global/groups')
+  const { posts } = await prayFetch<{ posts: ListPost[] }>('/api/people-groups/list', {
+    query: { fields: 'id,slug,name,latitude,longitude' }
+  })
+
+  const groups = posts
+    .filter(p => p.slug)
+    .map(p => ({
+      people_group_id: Number(p.id),
+      slug: p.slug as string,
+      name: p.name,
+      prayer_count: 0,
+      latitude: p.latitude != null ? Number(p.latitude) : null,
+      longitude: p.longitude != null ? Number(p.longitude) : null
+    }))
   if (!groups.length) return
 
   await db
     .insertInto('group_prayer_counts')
-    .values(groups.map(g => ({
-      people_group_id: g.id,
-      slug: g.slug,
-      name: g.name,
-      prayer_count: 0,
-      latitude: g.latitude,
-      longitude: g.longitude
-    })))
+    .values(groups)
     .onConflict(oc => oc.column('people_group_id').doUpdateSet({
       slug: eb => eb.ref('excluded.slug'),
       name: eb => eb.ref('excluded.name'),

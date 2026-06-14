@@ -10,13 +10,17 @@ export interface StackCard {
 
 const props = defineProps<{
   cards: StackCard[]
-  group: { name: string, imageUrl: string | null }
+  group: { name: string, imageUrl: string | null, slug: string }
 }>()
+
+// Daily-prayer signup for this specific people group, on pray.doxa.life.
+const signupUrl = computed(() => `https://pray.doxa.life/${props.group.slug}`)
 const emit = defineEmits<{
   (e: 'complete' | 'restart'): void
 }>()
 
 const { t } = useI18n()
+const localePath = useLocalePath()
 
 const index = ref(0)
 const completedFired = ref(false)
@@ -115,10 +119,13 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
       </Transition>
     </UCard>
 
-    <!-- Controls -->
-    <div class="flex items-center justify-between gap-3">
+    <!-- Controls: step through the stack, then a done-card action set -->
+    <div
+      v-if="!isLast"
+      class="flex items-center justify-between gap-3"
+    >
       <UButton
-        v-if="!isFirst && !isLast"
+        v-if="!isFirst"
         color="neutral"
         variant="ghost"
         icon="i-lucide-arrow-left"
@@ -131,37 +138,52 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
       />
 
       <UButton
-        v-if="isFirst"
         color="primary"
         size="lg"
         trailing-icon="i-lucide-arrow-right"
         class="flex-1 justify-center"
         @click="next"
       >
-        {{ t('pray.begin') }}
+        {{ isFirst ? t('pray.begin') : t('pray.next') }}
       </UButton>
+
+      <div class="w-9" />
+    </div>
+
+    <div
+      v-else
+      class="flex flex-col gap-3"
+    >
       <UButton
-        v-else-if="!isLast"
-        color="primary"
-        size="lg"
-        trailing-icon="i-lucide-arrow-right"
-        class="flex-1 justify-center"
-        @click="next"
-      >
-        {{ t('pray.next') }}
-      </UButton>
-      <UButton
-        v-else
         color="primary"
         size="lg"
         icon="i-lucide-refresh-cw"
-        class="flex-1 justify-center"
+        class="justify-center"
         @click="emit('restart')"
       >
         {{ t('pray.pray_another') }}
       </UButton>
-
-      <div class="w-9" />
+      <UButton
+        :to="signupUrl"
+        target="_blank"
+        color="primary"
+        variant="outline"
+        size="lg"
+        icon="i-lucide-bell"
+        class="justify-center"
+      >
+        {{ t('pray.signup_daily', { name: group.name }) }}
+      </UButton>
+      <UButton
+        :to="localePath('/')"
+        color="neutral"
+        variant="ghost"
+        size="lg"
+        icon="i-lucide-arrow-left"
+        class="justify-center"
+      >
+        {{ t('pray.back_to_global') }}
+      </UButton>
     </div>
   </div>
 </template>

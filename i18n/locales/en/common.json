@@ -2,6 +2,9 @@
   "app": {
     "name": "Doxa Global"
   },
+  "nav": {
+    "back_home": "Back to home"
+  },
   "landing": {
     "tagline": "Pray for the unreached, one people group at a time",
     "intro": "Each time you pray, you'll be given a different unreached people group — those least covered in prayer come first. Join believers worldwide carrying these peoples to God.",
@@ -21,6 +24,8 @@
     "begin": "Begin",
     "next": "Next",
     "pray_another": "Pray for another group",
+    "signup_daily": "Sign up to pray for the {name} daily",
+    "back_to_global": "Back to Doxa Global",
     "loading": "Finding a people group…",
     "error": "Something went wrong. Please try again.",
     "retry": "Try again",

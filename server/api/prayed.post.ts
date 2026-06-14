@@ -1,11 +1,10 @@
 // POST /api/prayed
 //
 // Called when a prayer is completed (the last card is reached). Increments the
-// local least-prayed counter, records the session locally, and forwards the
-// prayer to campaigns-sever for unified stats / Statinator. Idempotent on
-// session_id so a stray re-fire doesn't double-count.
+// local least-prayed counter and records the session locally. Idempotent on
+// session_id so a stray re-fire doesn't double-count. Reporting back to
+// campaigns-sever will be added later via a dedicated reporting path.
 import { db } from '../utils/database'
-import { prayFetch } from '../utils/pray'
 
 interface PrayedBody {
   session_id?: string
@@ -35,7 +34,7 @@ export default defineEventHandler(async (event) => {
     .returning('id')
     .executeTakeFirst()
 
-  // Only count + forward the first time we see this session_id.
+  // Only count the first time we see this session_id.
   if (!inserted) {
     return { message: 'Already recorded' }
   }
@@ -48,23 +47,6 @@ export default defineEventHandler(async (event) => {
     }))
     .where('people_group_id', '=', people_group_id)
     .execute()
-
-  // Forward to campaigns-sever (best-effort; local record already stands).
-  try {
-    await prayFetch('/api/global/session', {
-      method: 'POST',
-      body: {
-        session_id,
-        tracking_id,
-        people_group_id,
-        duration,
-        timestamp: new Date().toISOString(),
-        language: 'en'
-      }
-    })
-  } catch (err) {
-    console.error('Failed to forward prayer to campaigns-sever:', err)
-  }
 
   return { message: 'Prayer recorded' }
 })
