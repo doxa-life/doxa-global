@@ -1,5 +1,68 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss" theme(static);
 @import "@nuxt/ui";
+
+/* Doxa brand palette — forest green / sage / beige, matching campaigns-sever
+   (pray.doxa.life). Forest is the primary brand colour. */
+@theme static {
+  --color-forest-50: #92b195;
+  --color-forest-100: #73A17F;
+  --color-forest-200: #798279;
+  --color-forest-300: #6d766e;
+  --color-forest-400: #4e594f;
+  --color-forest-500: #3b463d;
+  --color-forest-600: #2a332a;
+  --color-forest-700: #232b24;
+  --color-forest-800: #1c221d;
+  --color-forest-900: #151916;
+  --color-forest-950: #0b0d0c;
+
+  --color-sage-50: #f7f8f6;
+  --color-sage-100: #eff0ed;
+  --color-sage-200: #e3e5e0;
+  --color-sage-300: #D1D4CD;
+  --color-sage-400: #b8bcb3;
+  --color-sage-500: #9ea396;
+  --color-sage-600: #858a7c;
+  --color-sage-700: #6c7065;
+  --color-sage-800: #53564f;
+  --color-sage-900: #3a3c38;
+  --color-sage-950: #1d1e1c;
+
+  --color-beige-50: #F3F3F1;
+  --color-beige-100: #f2f0ec;
+  --color-beige-200: #d1d4cd;
+  --color-beige-300: #cbc5b9;
+  --color-beige-400: #CBC5B9;
+  --color-beige-500: #b4ada3;
+  --color-beige-600: #a59d92;
+  --color-beige-700: #7a7264;
+  --color-beige-800: #5f594f;
+  --color-beige-900: #44403a;
+  --color-beige-950: #22201d;
+
+  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Bebas Neue', ui-sans-serif, sans-serif;
+}
+
+:root {
+  /* Warm light-mode UI tokens, matching pray.doxa.life */
+  --ui-bg: #ffffff;
+  --ui-bg-elevated: #ffffff;
+  --ui-bg-accented: #f9f8f6;
+  --ui-bg-inverted: #3B463D;
+
+  --ui-fg: #3B463D;
+  --ui-text: #3B463D;
+  --ui-text-highlighted: #3B463D;
+  --ui-text-muted: #5f594f;
+  --ui-text-dimmed: #958c7a;
+  --ui-text-inverted: #ffffff;
+
+  --ui-border: #e5e2db;
+  --ui-border-accented: #CBC5B9;
+  --ui-ring: #3B463D;
+}
 
 /* Prayer content (Tiptap-rendered) typography */
 .prayer-prose p {

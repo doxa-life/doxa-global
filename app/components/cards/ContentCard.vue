@@ -7,9 +7,9 @@ defineProps<{
 
 <template>
   <div class="flex flex-col gap-4">
-    <p class="text-sm uppercase tracking-widest text-primary font-medium">
+    <h3 class="font-heading text-2xl text-highlighted">
       {{ heading }}
-    </p>
+    </h3>
     <!-- Content is server-rendered from trusted, admin-authored library content
          and escaped by the server-side Tiptap renderer. -->
     <!-- eslint-disable-next-line vue/no-v-html -->

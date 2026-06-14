@@ -18,12 +18,14 @@
     "@nuxtjs/i18n": "^10.2.4",
     "kysely": "^0.28.0",
     "kysely-postgres-js": "^2.0.0",
+    "mapbox-gl": "^3.24.1",
     "nuxt": "^4.4.2",
     "postgres": "^3.4.7",
     "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
+    "@types/mapbox-gl": "^3.5.0",
     "@types/node": "^25.9.3",
     "eslint": "^10.2.0",
     "playwright": "^1.60.0",

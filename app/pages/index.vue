@@ -3,6 +3,14 @@ const { t } = useI18n()
 const localePath = useLocalePath()
 
 useHead({ title: 'Doxa Global' })
+
+// Clicking a group on the map opens its detail modal (direct group selection).
+const modalOpen = ref(false)
+const selectedSlug = ref<string | null>(null)
+function onSelect(slug: string) {
+  selectedSlug.value = slug
+  modalOpen.value = true
+}
 </script>
 
 <template>
@@ -51,5 +59,15 @@ useHead({ title: 'Doxa Global' })
         </ol>
       </div>
     </div>
+
+    <!-- Today's prayer coverage map -->
+    <div class="mt-16 w-full max-w-4xl">
+      <PrayerMap @select="onSelect" />
+    </div>
+
+    <GroupModal
+      v-model:open="modalOpen"
+      :slug="selectedSlug"
+    />
   </div>
 </template>

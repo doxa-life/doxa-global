@@ -76,9 +76,9 @@ try {
   await startBtn.first().click()
   await page.waitForURL(/\/pray/, { timeout: 10_000 })
 
-  // Wait for the first card (intro) to render — the group name heading.
+  // Wait for the first card to render — the group name is in the persistent header.
   await page.getByRole('button', { name: /begin/i }).waitFor({ state: 'visible', timeout: 15_000 })
-  const firstGroup = await page.locator('h1').first().textContent()
+  const firstGroup = await page.locator('h2').first().textContent()
   console.log(`✓ Prayer loop started — first group: "${firstGroup?.trim()}"`)
 
   // 3. Step through the whole stack
@@ -92,7 +92,7 @@ try {
   // 4. Pray for another group
   await page.getByRole('button', { name: /pray for another/i }).first().click()
   await page.getByRole('button', { name: /begin/i }).waitFor({ state: 'visible', timeout: 15_000 })
-  const secondGroup = await page.locator('h1').first().textContent()
+  const secondGroup = await page.locator('h2').first().textContent()
   console.log(`✓ Loaded a second group: "${secondGroup?.trim()}"`)
 
   // 5. Step through the second stack too

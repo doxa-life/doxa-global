@@ -12,12 +12,20 @@ import { db } from '../../utils/database'
 import { prayFetch, type GlobalGroup } from '../../utils/pray'
 
 async function ensurePoolSeeded(): Promise<void> {
-  const row = await db
+  // Seed when empty, and backfill coordinates when any rows still lack them
+  // (e.g. rows seeded before coordinates existed). Either path upserts the
+  // catalog without touching prayer_count, so weighting state is preserved.
+  const stats = await db
     .selectFrom('group_prayer_counts')
-    .select(({ fn }) => fn.countAll<string>().as('count'))
+    .select(({ fn }) => [
+      fn.countAll<string>().as('total'),
+      fn.count<string>('latitude').as('with_coords')
+    ])
     .executeTakeFirst()
 
-  if (row && Number(row.count) > 0) return
+  const total = Number(stats?.total ?? 0)
+  const withCoords = Number(stats?.with_coords ?? 0)
+  if (total > 0 && withCoords === total) return
 
   const { groups } = await prayFetch<{ groups: GlobalGroup[] }>('/api/global/groups')
   if (!groups.length) return
@@ -28,9 +36,16 @@ async function ensurePoolSeeded(): Promise<void> {
       people_group_id: g.id,
       slug: g.slug,
       name: g.name,
-      prayer_count: 0
+      prayer_count: 0,
+      latitude: g.latitude,
+      longitude: g.longitude
     })))
-    .onConflict(oc => oc.column('people_group_id').doNothing())
+    .onConflict(oc => oc.column('people_group_id').doUpdateSet({
+      slug: eb => eb.ref('excluded.slug'),
+      name: eb => eb.ref('excluded.name'),
+      latitude: eb => eb.ref('excluded.latitude'),
+      longitude: eb => eb.ref('excluded.longitude')
+    }))
     .execute()
 }
 

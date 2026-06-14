@@ -3,21 +3,24 @@ import type { StackCard } from '~/components/CardStack.vue'
 import type { NextGroup, SessionBundle } from '~/types/prayer'
 
 const { t } = useI18n()
+const route = useRoute()
 useHead({ title: 'Pray — Doxa Global' })
 
 const status = ref<'loading' | 'ready' | 'error'>('loading')
 const cards = ref<StackCard[]>([])
-const current = ref<{ group: NextGroup, sessionId: string } | null>(null)
+const current = ref<{ slug: string, peopleGroupId: number, sessionId: string } | null>(null)
 const stackKey = ref(0)
 
 let trackingId = ''
 const startedAt = ref(0)
 
-function buildCards(group: NextGroup, bundle: SessionBundle): StackCard[] {
+const header = ref<{ name: string, imageUrl: string | null }>({ name: '', imageUrl: null })
+
+function buildCards(bundle: SessionBundle): StackCard[] {
   const demo = bundle.demographics
+  // Merged "about" card: description + condensed demographics in one place.
   const out: StackCard[] = [
-    { type: 'intro', demographics: demo },
-    { type: 'demographics', demographics: demo }
+    { type: 'about', demographics: demo }
   ]
   if (bundle.day_in_life) {
     out.push({ type: 'content', heading: t('pray.day_in_life_title'), html: bundle.day_in_life.html })
@@ -25,20 +28,31 @@ function buildCards(group: NextGroup, bundle: SessionBundle): StackCard[] {
   for (const piece of bundle.pray_more) {
     out.push({ type: 'content', heading: piece.title || t('pray.scripture_title'), html: piece.html })
   }
-  out.push({ type: 'done', name: demo.name })
+  out.push({ type: 'done' })
   return out
 }
 
-async function loadNext() {
+// Load a specific people group when `slug` is given (chosen from the map),
+// otherwise ask the server for the next least-prayed group.
+async function loadGroup(slug?: string) {
   status.value = 'loading'
   try {
-    const group = await $fetch<NextGroup>('/api/groups/next')
-    const bundle = await $fetch<SessionBundle>(`/api/groups/${encodeURIComponent(group.slug)}/session`, {
+    let targetSlug = slug
+    if (!targetSlug) {
+      const next = await $fetch<NextGroup>('/api/groups/next')
+      targetSlug = next.slug
+    }
+    const bundle = await $fetch<SessionBundle>(`/api/groups/${encodeURIComponent(targetSlug)}/session`, {
       query: { locale: 'en' }
     })
-    current.value = { group, sessionId: newSessionId() }
+    current.value = {
+      slug: targetSlug,
+      peopleGroupId: bundle.demographics.id,
+      sessionId: newSessionId()
+    }
+    header.value = { name: bundle.demographics.name, imageUrl: bundle.demographics.image_url }
     startedAt.value = Date.now()
-    cards.value = buildCards(group, bundle)
+    cards.value = buildCards(bundle)
     stackKey.value++
     status.value = 'ready'
   } catch (err) {
@@ -56,7 +70,7 @@ async function onComplete() {
       body: {
         session_id: current.value.sessionId,
         tracking_id: trackingId,
-        people_group_id: current.value.group.people_group_id,
+        people_group_id: current.value.peopleGroupId,
         duration
       }
     })
@@ -65,13 +79,15 @@ async function onComplete() {
   }
 }
 
+// "Pray for another" always moves on to a random least-prayed group.
 function onRestart() {
-  loadNext()
+  loadGroup()
 }
 
 onMounted(async () => {
   trackingId = useTrackingId()
-  await loadNext()
+  const requested = typeof route.query.group === 'string' ? route.query.group : undefined
+  await loadGroup(requested)
 })
 </script>
 
@@ -103,7 +119,7 @@ onMounted(async () => {
       </p>
       <UButton
         color="primary"
-        @click="loadNext"
+        @click="loadGroup()"
       >
         {{ t('pray.retry') }}
       </UButton>
@@ -114,6 +130,7 @@ onMounted(async () => {
       v-else
       :key="stackKey"
       :cards="cards"
+      :group="header"
       @complete="onComplete"
       @restart="onRestart"
     />

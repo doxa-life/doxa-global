@@ -26,6 +26,8 @@ export interface GlobalGroup {
   id: number
   slug: string
   name: string
+  latitude: number | null
+  longitude: number | null
 }
 
 export interface ValueLabel {

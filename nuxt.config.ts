@@ -24,6 +24,7 @@ export default defineNuxtConfig({
     formApiKey: process.env.FORM_API_KEY || '',
     public: {
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || '',
+      mapboxToken: process.env.NUXT_PUBLIC_MAPBOX_TOKEN || '',
       statinatorUrl: process.env.NUXT_PUBLIC_STATINATOR_URL || 'https://statinator.doxa.life',
       statinatorProjectId: process.env.NUXT_PUBLIC_STATINATOR_PROJECT_ID || 'doxa-global',
       statinatorEnabled: process.env.NUXT_PUBLIC_STATINATOR_ENABLED === 'true'
@@ -45,5 +46,13 @@ export default defineNuxtConfig({
 
   nitro: {
     preset: 'bun'
+  },
+
+  vite: {
+    // Pre-bundle the map lib so Vite doesn't discover it at runtime and trigger
+    // a page reload that interrupts the map's mount.
+    optimizeDeps: {
+      include: ['mapbox-gl']
+    }
   }
 })

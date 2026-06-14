@@ -1,7 +1,4 @@
 <script setup lang="ts">
-defineProps<{
-  name: string
-}>()
 const { t } = useI18n()
 </script>
 
@@ -14,11 +11,11 @@ const { t } = useI18n()
       />
     </div>
     <div>
-      <h2 class="text-2xl font-bold text-highlighted mb-2">
+      <h2 class="font-heading text-3xl text-highlighted mb-2">
         {{ t('pray.done_title') }}
       </h2>
       <p class="text-muted">
-        {{ t('pray.done_body', { name }) }}
+        {{ t('pray.done_body_generic') }}
       </p>
     </div>
   </div>

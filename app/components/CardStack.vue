@@ -2,14 +2,16 @@
 import type { Demographics } from '~/types/prayer'
 
 export interface StackCard {
-  type: 'intro' | 'demographics' | 'content' | 'done'
-  name?: string
+  type: 'about' | 'content' | 'done'
   demographics?: Demographics
   heading?: string
   html?: string
 }
 
-const props = defineProps<{ cards: StackCard[] }>()
+const props = defineProps<{
+  cards: StackCard[]
+  group: { name: string, imageUrl: string | null }
+}>()
 const emit = defineEmits<{
   (e: 'complete' | 'restart'): void
 }>()
@@ -79,20 +81,26 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
 
     <!-- Card body -->
     <UCard
-      class="min-h-[24rem] flex"
-      :ui="{ body: 'flex-1 flex flex-col justify-center' }"
+      class="min-h-[26rem] flex"
+      :ui="{ body: 'flex-1 flex flex-col' }"
     >
+      <!-- Persistent people-group header (small square image + name) -->
+      <GroupHeader
+        :name="group.name"
+        :image-url="group.imageUrl"
+        class="pb-4 mb-4 border-b border-default"
+      />
+
       <Transition
         name="card"
         mode="out-in"
       >
-        <div :key="index">
-          <CardsIntroCard
-            v-if="current?.type === 'intro'"
-            :demographics="current.demographics!"
-          />
-          <CardsDemographicsCard
-            v-else-if="current?.type === 'demographics'"
+        <div
+          :key="index"
+          class="flex-1 flex flex-col justify-center"
+        >
+          <GroupAbout
+            v-if="current?.type === 'about'"
             :demographics="current.demographics!"
           />
           <CardsContentCard
@@ -102,7 +110,6 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
           />
           <CardsDoneCard
             v-else-if="current?.type === 'done'"
-            :name="current.name!"
           />
         </div>
       </Transition>

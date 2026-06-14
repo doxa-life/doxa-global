@@ -8,6 +8,8 @@ export interface GroupPrayerCountsTable {
   slug: string
   name: string
   prayer_count: Generated<number>
+  latitude: number | null
+  longitude: number | null
   updated_at: ColumnType<Date, string | undefined, string>
 }
 

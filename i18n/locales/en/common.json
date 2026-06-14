@@ -9,7 +9,13 @@
     "how_title": "How it works",
     "how_1": "You're handed a people group that needs prayer.",
     "how_2": "Move through a short, guided prayer stack.",
-    "how_3": "When you're done, pray for another."
+    "how_3": "When you're done, pray for another.",
+    "map": {
+      "title": "Prayed for today",
+      "summary": "{groups} groups · {prayers} prayers",
+      "times": "prayed for once | prayed for {count} times",
+      "empty": "No prayers yet today — be the first."
+    }
   },
   "pray": {
     "begin": "Begin",
@@ -19,6 +25,8 @@
     "error": "Something went wrong. Please try again.",
     "retry": "Try again",
     "pray_for": "Pray for the",
+    "pray_for_this": "Pray for the {name}",
+    "people_count": "{count} people",
     "overview": "Overview",
     "country": "Country",
     "population": "Population",
@@ -34,6 +42,7 @@
     "scripture_title": "Pray more",
     "done_title": "Amen",
     "done_body": "You prayed for the {name}.",
+    "done_body_generic": "Your prayer has been counted. Thank you for standing in the gap.",
     "groups_today": "{count} groups prayed for today"
   }
 }
