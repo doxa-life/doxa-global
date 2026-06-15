@@ -46,7 +46,7 @@ const loaded = ref(false)
 
 const progressPct = computed(() =>
   summary.value.total_groups > 0
-    ? Math.round((summary.value.prayed_total / summary.value.total_groups) * 100)
+    ? Math.round((summary.value.group_count / summary.value.total_groups) * 100)
     : 0
 )
 const numberFmt = new Intl.NumberFormat('en-US')
@@ -203,7 +203,7 @@ onUnmounted(() => {
     >
       <div class="flex items-baseline justify-between mb-1.5">
         <p class="text-sm text-default">
-          <span class="font-semibold text-highlighted">{{ numberFmt.format(summary.prayed_total) }}</span>
+          <span class="font-semibold text-highlighted">{{ numberFmt.format(summary.group_count) }}</span>
           {{ t('landing.map.progress', { total: numberFmt.format(summary.total_groups) }) }}
         </p>
         <p class="text-sm font-semibold text-primary">
