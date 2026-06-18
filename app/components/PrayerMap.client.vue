@@ -109,7 +109,7 @@ onMounted(async () => {
 
   const geojson = await $fetch<GeoJSON.FeatureCollection>('/api/map/groups')
 
-  map.on('load', () => {
+  const onMapLoad = () => {
     if (!map) return
     map.addSource('groups', { type: 'geojson', data: geojson as never })
 
@@ -183,7 +183,14 @@ onMounted(async () => {
     void pollToday()
     pollTimer = setInterval(pollToday, 12_000)
     loaded.value = true
-  })
+  }
+
+  // The GeoJSON fetch above can resolve after the style has already loaded —
+  // on warm-cache client-side navigation the 'load' event fires before this
+  // handler is attached, and Mapbox never fires it twice. Run setup directly
+  // when the style is already loaded so the pins and stats still appear.
+  if (map.isStyleLoaded()) onMapLoad()
+  else map.on('load', onMapLoad)
 })
 
 onUnmounted(() => {
